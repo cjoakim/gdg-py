@@ -1,0 +1,7 @@
+arrow
+check-manifest
+flake8
+pytest
+pytest-cov
+rstcheck
+Sphinx
