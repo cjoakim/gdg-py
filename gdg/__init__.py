@@ -10,3 +10,4 @@ gdg library
 import arrow
 import math
 
+from gdg.gdg import Gdg
