@@ -130,7 +130,21 @@ class Gdg(object):
             # RE_TIMESTAMP  = '\d\d\d\d-\d\d-\d\d-\d\d:\d\d:\d\d'  # 2021-02-05-07:56:23
 
         return 'todo'
-        
+
+    def __walk_fs(self):
+        files = list()
+        files_dir = ''  # TODO - get from self.path
+        for dir_name, subdirs, base_names in os.walk(files_dir):
+            for base_name in base_names:
+                full_name = "{}/{}".format(dir_name, base_name)
+                entry = dict()
+                entry['base'] = base_name
+                entry['dir'] = dir_name
+                entry['full'] = full_name
+                entry['abspath'] = os.path.abspath(full_name)
+                files.append(entry)
+        return files
+
     def __read_state(self):
         try:
             with open(self.path, 'rt') as f:
