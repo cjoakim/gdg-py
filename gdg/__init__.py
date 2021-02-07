@@ -9,5 +9,5 @@ gdg library
 
 import math
 
-from gdg.constants import Constants
+from gdg.gdg_constants import GdgConstants
 from gdg.gdg import Gdg

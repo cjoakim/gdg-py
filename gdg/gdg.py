@@ -10,7 +10,8 @@ import traceback
 from datetime import datetime, date, timezone
 from inspect import currentframe, getframeinfo
 
-from .constants import Constants
+from .gdg_constants import GdgConstants
+
 
 class Gdg(object):
     """
@@ -65,11 +66,11 @@ class Gdg(object):
             self.verbose = False
 
     def next(self):
-        template = self.state['pattern'].replace(Constants.parameter_char(), '{}')
+        template = self.state['pattern'].replace(GdgConstants.parameter_char(), '{}')
         values = list()
         p = self.state['value_param']
 
-        if p == Constants.format_generation():
+        if p == GdgConstants.format_generation():
             f, n = self.current(), 1
             if f != None:
                 n = self.__parse_generation_number(f)
@@ -77,16 +78,16 @@ class Gdg(object):
                     n = n + 1
                 else:
                     n = 1
-            values.append(Constants.generation_format().format(n))
+            values.append(GdgConstants.generation_format().format(n))
 
-        elif p == Constants.format_epoch():
+        elif p == GdgConstants.format_epoch():
             values.append(int(time.time()))
 
-        elif p == Constants.format_timestamp_utc():
-            values.append(datetime.utcnow().strftime(Constants.timestamp_format()))
+        elif p == GdgConstants.format_timestamp_utc():
+            values.append(datetime.utcnow().strftime(GdgConstants.timestamp_format()))
 
-        elif p == Constants.format_timestamp_local():
-            values.append(datetime.now().strftime(Constants.timestamp_format()))
+        elif p == GdgConstants.format_timestamp_local():
+            values.append(datetime.now().strftime(GdgConstants.timestamp_format()))
 
         basename = template.format(*values)
         return '{}{}{}'.format(self.directory, os.path.sep, basename)
@@ -131,14 +132,14 @@ class Gdg(object):
     # private methods follow 
 
     def __parse_value_param(self, value_param):
-        if value_param.lower() in Constants.valid_formats():
+        if value_param.lower() in GdgConstants.valid_formats():
             return value_param.lower()
         else:
             return None
 
     def __parse_generation_number(self, f):
         print('__parse_generation_number: {}'.format(f))
-        match = re.search(Constants.re_generation_number(), f)
+        match = re.search(GdgConstants.re_generation_number(), f)
         print(match)
         if match != None:
             span = match.span()
@@ -154,7 +155,7 @@ class Gdg(object):
         format_template = self.state['pattern'].replace('%', '{}')
         format_values = list()
         map_key = self.state['value_param']
-        re_value = Constants.re_token_map()[map_key]
+        re_value = GdgConstants.re_token_map()[map_key]
         format_values.append(re_value)
         return format_template.format(*format_values)
 
