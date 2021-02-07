@@ -15,7 +15,7 @@ setup(
     name='gdg',
 
     # Versions should comply with PEP440.
-    version='0.0.1',
+    version='0.0.2',
 
     description='gdg - generation data groups with python',
     long_description=long_description,
@@ -34,7 +34,7 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
 
         'Intended Audience :: Developers',
         'Topic :: Utilities',
@@ -57,7 +57,7 @@ setup(
 
     # Dev and Test dependencies, install like this: $ pip install -e .[dev,test]
     extras_require={
-        'dev':  ['check-manifest', 'flake8'],
-        'test': ['coverage', 'pytest', 'pytest-cov'],
+        'dev':  ['check-manifest'],
+        'test': ['pytest', 'pytest-cov'],
     },
 )
