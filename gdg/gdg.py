@@ -35,29 +35,40 @@ class Gdg(object):
         return self.__read_state()
 
     def set_generations(self, n):
-        if int(n) > 0:
-            self.state['generations'] = int(n)
-            self.__write_state()
-
-    def set_max_days(self, n):
-        if int(n) > 0:
-            self.state['max_days'] = int(n)
-            self.__write_state()
+        try:
+            if int(n) > 0:
+                self.state['generations'] = int(n)
+                self.__write_state()
+                return True
+            else:
+                return False
+        except:
+            return False
 
     def set_pattern(self, pattern, value_param):
+        # reject invalid args immediately
+        if (pattern == None) or (len(pattern.strip()) < 1):
+            return False
+        if (value_param == None) or (len(value_param.strip()) < 1):
+            return False
+        if (value_param.lower().strip() in GdgConstants.valid_formats()):
+            pass
+        else:
+            return False
+
+        curr_state = self.__read_state()  # capture current state in case of restore
+
         try:
-            curr_state = self.__read_state()  # capture current state in case of restore
             self.state['pattern'] = pattern.strip()
-            self.state['value_param'] = self.__parse_value_param(value_param)
+            self.state['value_param'] = value_param.lower().strip()
             self.state['regexp'] = self.__format_regexp()
-            print('set_pattern before next()')
-            s = self.next()  # will throw an exception if pattern is invalid, discard s
-            print('set_pattern after next()')
+            self.__write_state()
             return True
         except Exception as e:
             self.state = curr_state  # restore the state from before this method invocation
+            self.__write_state()
             traceback.print_exc()
-            raise e
+            return False 
 
     def set_verbose(self, bool=True):
         if bool == True:
@@ -66,31 +77,36 @@ class Gdg(object):
             self.verbose = False
 
     def next(self):
-        template = self.state['pattern'].replace(GdgConstants.parameter_char(), '{}')
-        values = list()
-        p = self.state['value_param']
+        try:
+            template = self.state['pattern'].replace(GdgConstants.parameter_char(), '{}')
+            values = list()
+            p = self.state['value_param']
 
-        if p == GdgConstants.format_generation():
-            f, n = self.current(), 1
-            if f != None:
-                n = self.__parse_generation_number(f)
-                if n > 0:
-                    n = n + 1
-                else:
-                    n = 1
-            values.append(GdgConstants.generation_format().format(n))
+            if p == GdgConstants.format_generation():
+                f, n = self.current(), 1
+                if f != None:
+                    n = self.__parse_generation_number(f)
+                    if n > 0:
+                        n = n + 1
+                    else:
+                        n = 1
+                values.append(GdgConstants.generation_format().format(n))
 
-        elif p == GdgConstants.format_epoch():
-            values.append(int(time.time()))
+            elif p == GdgConstants.format_epoch():
+                values.append(int(time.time()))
 
-        elif p == GdgConstants.format_timestamp_utc():
-            values.append(datetime.utcnow().strftime(GdgConstants.timestamp_format()))
+            elif p == GdgConstants.format_timestamp_utc():
+                values.append(datetime.utcnow().strftime(GdgConstants.timestamp_format()))
 
-        elif p == GdgConstants.format_timestamp_local():
-            values.append(datetime.now().strftime(GdgConstants.timestamp_format()))
+            elif p == GdgConstants.format_timestamp_local():
+                values.append(datetime.now().strftime(GdgConstants.timestamp_format()))
+            else:
+                return None
 
-        basename = template.format(*values)
-        return '{}{}{}'.format(self.directory, os.path.sep, basename)
+            basename = template.format(*values)
+            return '{}{}{}'.format(self.directory, os.path.sep, basename)
+        except:
+            return None
 
     def current(self):
         all = self.all_generations()
@@ -131,12 +147,6 @@ class Gdg(object):
         
     # private methods follow 
 
-    def __parse_value_param(self, value_param):
-        if value_param.lower() in GdgConstants.valid_formats():
-            return value_param.lower()
-        else:
-            return None
-
     def __parse_generation_number(self, f):
         print('__parse_generation_number: {}'.format(f))
         match = re.search(GdgConstants.re_generation_number(), f)
@@ -152,12 +162,15 @@ class Gdg(object):
         return -1
 
     def __format_regexp(self):
-        format_template = self.state['pattern'].replace('%', '{}')
-        format_values = list()
-        map_key = self.state['value_param']
-        re_value = GdgConstants.re_token_map()[map_key]
-        format_values.append(re_value)
-        return format_template.format(*format_values)
+        try:
+            format_template = self.state['pattern'].replace('%', '{}')
+            format_values = list()
+            map_key = self.state['value_param']
+            re_value = GdgConstants.re_token_map()[map_key]
+            format_values.append(re_value)
+            return format_template.format(*format_values)
+        except:
+            return None
 
     def __walk_fs(self):
         files = list()
