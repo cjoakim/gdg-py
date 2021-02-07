@@ -7,9 +7,13 @@ import gdg
 
 
 def test_generation_number_type_gdg():
-    directory = __prune_test_directory()
+    dir_path = __test_directory_path()
+    if os.path.isdir(dir_path):
+        __prune_test_directory()
+    else:
+        os.mkdir(dir_path) 
 
-    g = gdg.Gdg(directory)
+    g = gdg.Gdg(dir_path)
     assert(g.get_state() == {})
 
     bool = g.set_generations(-1)
@@ -31,7 +35,6 @@ def test_generation_number_type_gdg():
 
     bool = g.set_pattern('sample-%.txt', 'g')
     assert(bool == True)
-
 
     # assertions after .gdg state is established
     state = g.get_state()
@@ -79,26 +82,24 @@ def test_generation_number_type_gdg():
         'tmp/generations/sample-000019.txt', 
         'tmp/generations/sample-000020.txt'
     ]
-
     assert(g.all_files() == expected_files_list)
     assert(g.all_generations() == expected_files_list)
     assert(g.all_generations(limited=False) == expected_files_list)
 
 # private methods
 
-def __test_directory():
+def __test_directory_path():
     return 'tmp/generations'
 
 def __prune_test_directory():
-    for f in glob.glob('{}/.gdg'.format(__test_directory())):
+    dir_path = __test_directory_path()
+    for f in glob.glob('{}/.gdg'.format(dir_path)):
         os.remove(f)
-    for f in glob.glob('{}/*'.format(__test_directory())):
+    for f in glob.glob('{}/*'.format(dir_path)):
         os.remove(f)
-    return __test_directory()
 
 def __write(outfile, s, verbose=True):
     with open(outfile, 'w') as f:
         f.write(s)
         if verbose:
             print('file written: {}'.format(outfile))
-
