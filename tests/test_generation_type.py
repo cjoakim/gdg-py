@@ -5,13 +5,29 @@ import os
 
 import gdg
 
+def test_dir_path_with_trailing_sep():
+    dir_path_with_trailing_sep = 'tmp/some_path{}'.format(os.path.sep)
+    __ensure_dir_present_and_empty(dir_path_with_trailing_sep)
 
-def test_generation_number_type_gdg():
+    g = gdg.Gdg(dir_path_with_trailing_sep, reset=True)
+    g.save_state()
+    assert(g.directory == 'tmp/some_path')
+    assert(g.get_generations() == -1)
+    assert(g.get_pattern() == None)
+    assert(g.next() == None)
+
+    bool = g.set_pattern(None, 'g')
+    assert(bool == False)
+    assert(g.get_pattern() == None)
+
+    bool = g.set_pattern('sample-%.txt', None)
+    assert(bool == False)
+    assert(g.get_pattern() == None)
+
+def test_typical_use():
+    # ensure the target directories are present and empty of regular files
     dir_path = __test_directory_path()
-    if os.path.isdir(dir_path):
-        __prune_test_directory()
-    else:
-        os.mkdir(dir_path) 
+    __ensure_dir_present_and_empty(dir_path)
 
     g = gdg.Gdg(dir_path)
     assert(g.get_state() == {})
@@ -35,6 +51,7 @@ def test_generation_number_type_gdg():
 
     bool = g.set_pattern('sample-%.txt', 'g')
     assert(bool == True)
+    assert(g.get_pattern() == 'sample-%.txt')
 
     # assertions after .gdg state is established
     state = g.get_state()
@@ -86,20 +103,26 @@ def test_generation_number_type_gdg():
     assert(g.all_generations() == expected_files_list)
     assert(g.all_generations(limited=False) == expected_files_list)
 
+    assert(g.previous() == 'tmp/generations/sample-000019.txt')
+    assert(g.current()  == 'tmp/generations/sample-000020.txt')
+    assert(g.next()     == 'tmp/generations/sample-000021.txt')
+
+    assert(str(g).startswith('<Gdg directory:tmp/generations state:{'))
+
 # private methods
 
 def __test_directory_path():
     return 'tmp/generations'
 
-def __prune_test_directory():
-    dir_path = __test_directory_path()
-    for f in glob.glob('{}/.gdg'.format(dir_path)):
-        os.remove(f)
-    for f in glob.glob('{}/*'.format(dir_path)):
-        os.remove(f)
+def __ensure_dir_present_and_empty(dir_path):
+    if os.path.isdir(dir_path):
+        for f in glob.glob('{}/.gdg'.format(dir_path)):
+            os.remove(f)
+        for f in glob.glob('{}/*'.format(dir_path)):
+            os.remove(f)
+    else:
+        os.mkdir(dir_path) 
 
-def __write(outfile, s, verbose=True):
+def __write(outfile, s):
     with open(outfile, 'w') as f:
         f.write(s)
-        if verbose:
-            print('file written: {}'.format(outfile))

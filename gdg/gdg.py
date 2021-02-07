@@ -14,25 +14,22 @@ from .gdg_constants import GdgConstants
 
 
 class Gdg(object):
-    """
-
-    """
-    def __init__(self, directory, verbose=False):
+    def __init__(self, directory, reset=False):
         self.directory = directory.strip()
         if self.directory.endswith(os.path.sep):
             self.directory = self.directory[:-1]
-        self.verbose = verbose
         self.metafile = '{}{}.gdg'.format(self.directory, os.path.sep)
-        self.state = self.__read_state()
+        if reset == True:
+            self.state = {}
+        else:
+            self.state = self.__read_state()
         self.__write_state()
-
-        if self.verbose:
-            print('init, directory: {}'.format(self.directory))
-            print('init, metafile:  {}'.format(self.metafile))
-            print(str(self))
 
     def get_state(self):
         return self.__read_state()
+
+    def save_state(self):
+        return self.__write_state()
 
     def set_generations(self, n):
         try:
@@ -52,7 +49,6 @@ class Gdg(object):
             return -1
 
     def set_pattern(self, pattern, value_param):
-        # reject invalid args immediately
         if (pattern == None) or (len(pattern.strip()) < 1):
             return False
         if (value_param == None) or (len(value_param.strip()) < 1):
@@ -62,25 +58,17 @@ class Gdg(object):
         else:
             return False
 
-        curr_state = self.__read_state()  # capture current state in case of restore
+        self.state['pattern'] = pattern.strip()
+        self.state['value_param'] = value_param.lower().strip()
+        self.state['regexp'] = self.__format_regexp()
+        self.__write_state()
+        return True
 
-        try:
-            self.state['pattern'] = pattern.strip()
-            self.state['value_param'] = value_param.lower().strip()
-            self.state['regexp'] = self.__format_regexp()
-            self.__write_state()
-            return True
-        except Exception as e:
-            self.state = curr_state  # restore the state from before this method invocation
-            self.__write_state()
-            traceback.print_exc()
-            return False 
-
-    def set_verbose(self, bool=True):
-        if bool == True:
-            self.verbose = True
-        if bool == False:
-            self.verbose = False
+    def get_pattern(self):
+        if 'pattern' in self.state:
+            return self.state['pattern']
+        else:
+            return None
 
     def next(self):
         try:
@@ -89,14 +77,10 @@ class Gdg(object):
             p = self.state['value_param']
 
             if p == GdgConstants.format_generation():
-                f, n = self.current(), 1
+                f, n = self.current(), 0
                 if f != None:
                     n = self.__parse_generation_number(f)
-                    if n > 0:
-                        n = n + 1
-                    else:
-                        n = 1
-                values.append(GdgConstants.generation_format().format(n))
+                values.append(GdgConstants.generation_format().format(n + 1))
 
             elif p == GdgConstants.format_epoch():
                 values.append(int(time.time()))
@@ -166,29 +150,18 @@ class Gdg(object):
     # private methods follow 
 
     def __parse_generation_number(self, f):
-        print('__parse_generation_number: {}'.format(f))
         match = re.search(GdgConstants.re_generation_number(), f)
-        print(match)
         if match != None:
             span = match.span()
-            if span != None:
-                print('span[0] {}'.format(span[0]))
-                print('span[1] {}'.format(span[1]))
-                numpart = f[span[0]:span[1]]
-                print('numpart: {}'.format(numpart))
-                return int(numpart)
-        return -1
+            return int(f[span[0]:span[1]])
 
     def __format_regexp(self):
-        try:
-            format_template = self.state['pattern'].replace('%', '{}')
-            format_values = list()
-            map_key = self.state['value_param']
-            re_value = GdgConstants.re_token_map()[map_key]
-            format_values.append(re_value)
-            return format_template.format(*format_values)
-        except:
-            return None
+        format_template = self.state['pattern'].replace('%', '{}')
+        format_values = list()
+        map_key = self.state['value_param']
+        re_value = GdgConstants.re_token_map()[map_key]
+        format_values.append(re_value)
+        return format_template.format(*format_values)
 
     def __list_directory(self):
         # this method intentionally omits hidden files in the directory, such as .gdg
@@ -211,5 +184,3 @@ class Gdg(object):
         with open(self.metafile, 'w') as f:
             jstr = json.dumps(self.state)
             f.write(jstr)
-            if self.verbose:
-                print('state:{}'.format(jstr))
