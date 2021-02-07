@@ -12,31 +12,6 @@ from inspect import currentframe, getframeinfo
 
 from .constants import Constants
 
-
-FORMAT_GENERATION = Constants.format_generation()
-FORMAT_EPOCH      = Constants.format_epoch()
-FORMAT_TIMESTAMP_UTC = 'ts_utc'
-FORMAT_TIMESTAMP_LOCAL = 'ts_local'
-VALID_FORMATS = [
-    FORMAT_GENERATION,
-    FORMAT_EPOCH,
-    FORMAT_TIMESTAMP_UTC,
-    FORMAT_TIMESTAMP_LOCAL
-]
-
-TIMESTAMP_FORMAT = '%Y-%m-%d-%H:%M:%S'
-
-PARAMETER_CHAR = '%'
-
-RE_TOKEN_MAP = dict()
-RE_TOKEN_MAP[FORMAT_GENERATION] = '\\d\\d\\d\\d\\d\\d'  # 6 digits
-RE_TOKEN_MAP[FORMAT_EPOCH]      = '\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d'  # 10 digits
-RE_TOKEN_MAP[FORMAT_TIMESTAMP_UTC]   = '\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d:\\d\\d:\\d\\d'  # 2021-02-05-07:56:23
-RE_TOKEN_MAP[FORMAT_TIMESTAMP_LOCAL] = '\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d:\\d\\d:\\d\\d'  # 2021-02-05-07:56:23
-
-RE_GENERATIION_NUMBER = '\\d\\d\\d\\d\\d\\d'
-
-
 class Gdg(object):
     """
 
@@ -90,11 +65,11 @@ class Gdg(object):
             self.verbose = False
 
     def next(self):
-        template = self.state['pattern'].replace('%', '{}')
+        template = self.state['pattern'].replace(Constants.parameter_char(), '{}')
         values = list()
         p = self.state['value_param']
 
-        if p == FORMAT_GENERATION:
+        if p == Constants.format_generation():
             f, n = self.current(), 1
             if f != None:
                 n = self.__parse_generation_number(f)
@@ -102,16 +77,16 @@ class Gdg(object):
                     n = n + 1
                 else:
                     n = 1
-            values.append('{0:06d}'.format(n))
+            values.append(Constants.generation_format().format(n))
 
-        elif p == FORMAT_EPOCH:
+        elif p == Constants.format_epoch():
             values.append(int(time.time()))
 
-        elif p == FORMAT_TIMESTAMP_UTC:
-            values.append(datetime.utcnow().strftime(TIMESTAMP_FORMAT))
+        elif p == Constants.format_timestamp_utc():
+            values.append(datetime.utcnow().strftime(Constants.timestamp_format()))
 
-        elif p == FORMAT_TIMESTAMP_LOCAL:
-            values.append(datetime.now().strftime(TIMESTAMP_FORMAT))
+        elif p == Constants.format_timestamp_local():
+            values.append(datetime.now().strftime(Constants.timestamp_format()))
 
         basename = template.format(*values)
         return '{}{}{}'.format(self.directory, os.path.sep, basename)
@@ -156,14 +131,14 @@ class Gdg(object):
     # private methods follow 
 
     def __parse_value_param(self, value_param):
-        if value_param.lower() in VALID_FORMATS:
+        if value_param.lower() in Constants.valid_formats():
             return value_param.lower()
         else:
             return None
 
     def __parse_generation_number(self, f):
         print('__parse_generation_number: {}'.format(f))
-        match = re.search(RE_GENERATIION_NUMBER, f)
+        match = re.search(Constants.re_generation_number(), f)
         print(match)
         if match != None:
             span = match.span()
@@ -178,7 +153,8 @@ class Gdg(object):
     def __format_regexp(self):
         format_template = self.state['pattern'].replace('%', '{}')
         format_values = list()
-        re_value = RE_TOKEN_MAP[self.state['value_param']] 
+        map_key = self.state['value_param']
+        re_value = Constants.re_token_map()[map_key]
         format_values.append(re_value)
         return format_template.format(*format_values)
 
