@@ -90,8 +90,6 @@ class Gdg(object):
 
             elif p == GdgConstants.format_timestamp_local():
                 values.append(datetime.now().strftime(GdgConstants.timestamp_format()))
-            else:
-                return None
 
             basename = template.format(*values)
             return '{}{}{}'.format(self.directory, os.path.sep, basename)
