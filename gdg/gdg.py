@@ -27,11 +27,11 @@ PARAMETER_CHAR = '%'
 
 RE_TOKEN_MAP = dict()
 RE_TOKEN_MAP[FORMAT_GENERATION] = '\d\d\d\d\d\d'  # 6 digits
-RE_TOKEN_MAP[FORMAT_EPOCH]      = '\d\d\d\d\d\d\d\d\d\d'  # 1612529215 (10 digits)
+RE_TOKEN_MAP[FORMAT_EPOCH]      = '\d\d\d\d\d\d\d\d\d\d'  # 10 digits
 RE_TOKEN_MAP[FORMAT_TIMESTAMP_UTC]   = '\d\d\d\d-\d\d-\d\d-\d\d:\d\d:\d\d'  # 2021-02-05-07:56:23
 RE_TOKEN_MAP[FORMAT_TIMESTAMP_LOCAL] = '\d\d\d\d-\d\d-\d\d-\d\d:\d\d:\d\d'  # 2021-02-05-07:56:23
 
-RE_GENERATIION_NUMBER = '*\d\d\d\d\d\d*'
+RE_GENERATIION_NUMBER = '\d\d\d\d\d\d'
 
 
 class Gdg(object):
@@ -87,61 +87,61 @@ class Gdg(object):
             self.verbose = False
 
     def next(self):
-        #return 'first: {} second:{}'.format(*['a', 'b'])
-        template = self.state['pattern']
+        template = self.state['pattern'].replace('%', '{}')
         values = list()
         p = self.state['value_param']
+
         if p == FORMAT_GENERATION:
-            f = self.current()
-            n = 1
-
-            print('next, current: {}'.format(f))
-            if f == None:
-                n = 1
-            else:
-                compiled_re = re.compile('{}{}{}'.format(
-                    self.directory, os.path.sep, RE_GENERATIION_NUMBER))
-                m = compiled_re.match(f)
-                print(m)
-
-            #     n = 2 # todo, read fs to get current n
+            f, n = self.current(), 1
+            if f != None:
+                n = self.__parse_generation_number(f)
+                if n > 0:
+                    n = n + 1
+                else:
+                    n = 1
             values.append('{0:06d}'.format(n))
-        if p == FORMAT_EPOCH:
+
+        elif p == FORMAT_EPOCH:
             values.append(int(time.time()))
-        if p == FORMAT_TIMESTAMP_UTC:
+
+        elif p == FORMAT_TIMESTAMP_UTC:
             values.append(datetime.utcnow().strftime(TIMESTAMP_FORMAT))
-        if p == FORMAT_TIMESTAMP_LOCAL:
+
+        elif p == FORMAT_TIMESTAMP_LOCAL:
             values.append(datetime.now().strftime(TIMESTAMP_FORMAT))
-        return template.format(*values)
+
+        basename = template.format(*values)
+        return '{}{}{}'.format(self.directory, os.path.sep, basename)
 
     def current(self):
-        all = self.all()
+        all = self.all_generations()
         if len(all) > 0:
             return all[-1]
         else:
             return None
 
     def previous(self):
-        all = self.all()
+        all = self.all_generations()
         if len(all) > 1:
             return all[-2]
         else:
             return None
 
-    def all(self):
+    def all_generations(self):
         files_list, matched_list = self.__walk_fs(), list()
         compiled_re = re.compile('{}{}{}'.format(
             self.directory, os.path.sep, self.state['regexp']))
         for f in files_list:
-            #print(f)
             m = compiled_re.match(f)
             if m != None:
-                print(m)
                 matched_list.append(f)
         return sorted(matched_list)
 
+    def all_files(self):
+        return self.__walk_fs()
+
     def prune(do_deletes=False):
-        # return a list of filenames, optionally delete them
+        # TODO return a list of filenames, optionally delete them 
         pass
 
     # dunder methods
@@ -158,6 +158,20 @@ class Gdg(object):
         else:
             return None
 
+    def __parse_generation_number(self, f):
+        print('__parse_generation_number: {}'.format(f))
+        match = re.search(RE_GENERATIION_NUMBER, f)
+        print(match)
+        if match != None:
+            span = match.span()
+            if span != None:
+                print('span[0] {}'.format(span[0]))
+                print('span[1] {}'.format(span[1]))
+                numpart = f[span[0]:span[1]]
+                print('numpart: {}'.format(numpart))
+                return int(numpart)
+        return -1
+
     def __format_regexp(self):
         format_template = self.state['pattern'].replace('%', '{}')
         format_values = list()
@@ -171,7 +185,7 @@ class Gdg(object):
             for base_name in base_names:
                 relative_path = "{}/{}".format(dir_name, base_name)
                 files.append(relative_path)
-        return files
+        return sorted(files)
 
     def __read_state(self):
         try:

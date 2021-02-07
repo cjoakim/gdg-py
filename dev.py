@@ -21,9 +21,13 @@ if __name__ == "__main__":
         print('next...')
         print(g.next())
 
-        files_list = g.all()
+        files_list = g.all_files()
         for f in files_list:
-            print('all: {}'.format(f))
+            print('all_files: {}'.format(f))
+
+        files_list = g.all_generations()
+        for f in files_list:
+            print('all_generations: {}'.format(f))
 
         print('current...')
         print(g.current())
