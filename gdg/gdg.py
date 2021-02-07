@@ -10,8 +10,11 @@ import traceback
 from datetime import datetime, date, timezone
 from inspect import currentframe, getframeinfo
 
-FORMAT_GENERATION = 'g'
-FORMAT_EPOCH      = 'e'
+from .constants import Constants
+
+
+FORMAT_GENERATION = Constants.format_generation()
+FORMAT_EPOCH      = Constants.format_epoch()
 FORMAT_TIMESTAMP_UTC = 'ts_utc'
 FORMAT_TIMESTAMP_LOCAL = 'ts_local'
 VALID_FORMATS = [
@@ -26,12 +29,12 @@ TIMESTAMP_FORMAT = '%Y-%m-%d-%H:%M:%S'
 PARAMETER_CHAR = '%'
 
 RE_TOKEN_MAP = dict()
-RE_TOKEN_MAP[FORMAT_GENERATION] = '\d\d\d\d\d\d'  # 6 digits
-RE_TOKEN_MAP[FORMAT_EPOCH]      = '\d\d\d\d\d\d\d\d\d\d'  # 10 digits
-RE_TOKEN_MAP[FORMAT_TIMESTAMP_UTC]   = '\d\d\d\d-\d\d-\d\d-\d\d:\d\d:\d\d'  # 2021-02-05-07:56:23
-RE_TOKEN_MAP[FORMAT_TIMESTAMP_LOCAL] = '\d\d\d\d-\d\d-\d\d-\d\d:\d\d:\d\d'  # 2021-02-05-07:56:23
+RE_TOKEN_MAP[FORMAT_GENERATION] = '\\d\\d\\d\\d\\d\\d'  # 6 digits
+RE_TOKEN_MAP[FORMAT_EPOCH]      = '\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d'  # 10 digits
+RE_TOKEN_MAP[FORMAT_TIMESTAMP_UTC]   = '\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d:\\d\\d:\\d\\d'  # 2021-02-05-07:56:23
+RE_TOKEN_MAP[FORMAT_TIMESTAMP_LOCAL] = '\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d:\\d\\d:\\d\\d'  # 2021-02-05-07:56:23
 
-RE_GENERATIION_NUMBER = '\d\d\d\d\d\d'
+RE_GENERATIION_NUMBER = '\\d\\d\\d\\d\\d\\d'
 
 
 class Gdg(object):

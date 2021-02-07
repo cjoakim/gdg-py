@@ -7,7 +7,7 @@ VERSION = __version__
 gdg library
 """
 
-import arrow
 import math
 
+from gdg.constants import Constants
 from gdg.gdg import Gdg
