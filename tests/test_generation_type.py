@@ -45,26 +45,49 @@ def test_generation_number_type_gdg():
     assert(g.previous() == None)
     assert(g.current() == None)
     assert(g.all_generations() == [])
-    assert(g.all_files() == ['tmp/epoch/.gdg'])
+    assert(g.all_files() == [])
 
-    assert(g.next() == 'tmp/epoch/sample-000001.txt')
+    assert(g.next() == 'tmp/generations/sample-000001.txt')
 
-    for i in range(1, 21):
+    for i in range(1, 21):  # write files 000001 through 000020
         fname = g.next()
         __write(fname, 'this if file {}'.format(i))
     
-    g.prune()
+    assert(g.previous() == 'tmp/generations/sample-000019.txt')
+    assert(g.current()  == 'tmp/generations/sample-000020.txt')
 
-    assert(g.previous() == 'tmp/epoch/sample-000019.txt')
-    assert(g.current()  == 'tmp/epoch/sample-000020.txt')
+    assert(len(g.all_generations()) == 10)
+    assert(len(g.all_generations(limited=False)) == 20)
+    assert(len(g.all_files()) == 20)
 
-    # assert(g.all_generations() == ['tmp/epoch/.gdg'])
-    # assert(g.all_files() == ['tmp/epoch/.gdg'])
+    assert(g.prune() == 10)
+    assert(g.prune() == 0)
+
+    assert(len(g.all_generations()) == 10)
+    assert(len(g.all_generations(limited=False)) == 10)
+    assert(len(g.all_files()) == 10)
+
+    expected_files_list = [
+        'tmp/generations/sample-000011.txt', 
+        'tmp/generations/sample-000012.txt', 
+        'tmp/generations/sample-000013.txt', 
+        'tmp/generations/sample-000014.txt', 
+        'tmp/generations/sample-000015.txt', 
+        'tmp/generations/sample-000016.txt', 
+        'tmp/generations/sample-000017.txt', 
+        'tmp/generations/sample-000018.txt', 
+        'tmp/generations/sample-000019.txt', 
+        'tmp/generations/sample-000020.txt'
+    ]
+
+    assert(g.all_files() == expected_files_list)
+    assert(g.all_generations() == expected_files_list)
+    assert(g.all_generations(limited=False) == expected_files_list)
 
 # private methods
 
 def __test_directory():
-    return 'tmp/epoch'
+    return 'tmp/generations'
 
 def __prune_test_directory():
     for f in glob.glob('{}/.gdg'.format(__test_directory())):

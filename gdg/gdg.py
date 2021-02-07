@@ -1,5 +1,6 @@
 __author__ = 'cjoakim'
 
+import glob
 import json
 import os
 import re
@@ -8,7 +9,6 @@ import time
 import traceback
 
 from datetime import datetime, date, timezone
-from inspect import currentframe, getframeinfo
 
 from .gdg_constants import GdgConstants
 
@@ -44,6 +44,12 @@ class Gdg(object):
                 return False
         except:
             return False
+
+    def get_generations(self):
+        if 'generations' in self.state:
+            return self.state['generations']
+        else:
+            return -1
 
     def set_pattern(self, pattern, value_param):
         # reject invalid args immediately
@@ -122,22 +128,34 @@ class Gdg(object):
         else:
             return None
 
-    def all_generations(self):
-        files_list, matched_list = self.__walk_fs(), list()
+    def all_generations(self, limited=True):
+        files_list, matched_list = self.__list_directory(), list()
         compiled_re = re.compile('{}{}{}'.format(
             self.directory, os.path.sep, self.state['regexp']))
         for f in files_list:
             m = compiled_re.match(f)
             if m != None:
                 matched_list.append(f)
-        return sorted(matched_list)
+
+        if limited == True:
+            sorted_list = sorted(matched_list)
+            index = len(sorted_list) - self.get_generations()
+            return sorted(sorted_list[index:])
+        else:
+            return sorted(matched_list)
 
     def all_files(self):
-        return self.__walk_fs()
+        return self.__list_directory()
 
-    def prune(do_deletes=False):
-        # TODO return a list of filenames, optionally delete them 
-        pass
+    def prune(self, do_deletes=False):
+        # return the number of files removed from the filesystem
+        retain_hash = self.__generations_hash()
+        pruned_count = 0
+        for f in self.all_files():
+            if f not in retain_hash:
+                os.remove(f)
+                pruned_count = pruned_count + 1
+        return pruned_count
 
     # dunder methods
 
@@ -172,13 +190,15 @@ class Gdg(object):
         except:
             return None
 
-    def __walk_fs(self):
-        files = list()
-        for dir_name, subdirs, base_names in os.walk(self.directory):
-            for base_name in base_names:
-                relative_path = "{}/{}".format(dir_name, base_name)
-                files.append(relative_path)
-        return sorted(files)
+    def __list_directory(self):
+        # this method intentionally omits hidden files in the directory, such as .gdg
+        return sorted(glob.glob('{}/*'.format(self.directory)))
+
+    def __generations_hash(self):
+        hash = dict()
+        for f in self.all_generations():
+            hash[f] = True
+        return hash
 
     def __read_state(self):
         try:

@@ -1,1 +1,1 @@
-{"generations": 10}
+{"generations": 10, "pattern": "sample-%.txt", "value_param": "g", "regexp": "sample-\\d\\d\\d\\d\\d\\d.txt"}

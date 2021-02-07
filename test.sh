@@ -1,12 +1,14 @@
 #!/bin/bash
 
-echo 'checking the source code with flake8 ...'
-#flake8 gdg --ignore F401
+mkdir -p tmp/epoch
+mkdir -p tmp/generations
+mkdir -p tmp/ts_utc 
+mkdir -p tmp/ts_utc
 
 echo 'executing unit tests with code coverage ...'
-# pytest -v --cov=gdg/ --cov-report html tests/
-
 python -m pytest --cov=gdg/ --cov-report html tests/
+
+
 
 # For sdist deployment to PyPi, or local PyPi server:
 # python setup.py sdist

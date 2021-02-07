@@ -10,7 +10,7 @@ import gdg
 
 if __name__ == "__main__":
     print('main')
-    g = gdg.Gdg('data/gen_based', True)
+    g = gdg.Gdg('tmp/generations', True)
 
     try:
         print('set_generations...')
@@ -21,13 +21,13 @@ if __name__ == "__main__":
         print('next...')
         print(g.next())
 
-        files_list = g.all_files()
-        for f in files_list:
-            print('all_files: {}'.format(f))
+        print('all_files...')
+        print(g.all_files())
+        print(len(g.all_files()))
 
-        files_list = g.all_generations()
-        for f in files_list:
-            print('all_generations: {}'.format(f))
+        print('all_generations...')
+        print(g.all_generations())
+        print(len(g.all_generations()))
 
         print('current...')
         print(g.current())
@@ -40,6 +40,9 @@ if __name__ == "__main__":
 
         print('next...')
         print(g.next())
+
+        print('prune...')
+        g.prune()
 
     except Exception as e:
         traceback.print_exc()
