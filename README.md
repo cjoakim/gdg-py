@@ -12,6 +12,9 @@ Advantages to grouping related data sets include:
 - The operating system is able to keep the generations in chronological order.
 - Outdated or obsolete generations can be automatically deleted by the operating system.
 
+## PyPI
+
+- [gdg @ PyPI](https://pypi.org/project/gdg/)
 
 ## PyTest Test Results 2021/02/07
 
