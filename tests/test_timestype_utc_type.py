@@ -28,7 +28,7 @@ def test_typical_use():
     assert(state['generations'] == 3)
     assert(state['pattern']     == 'sample-%.txt')
     assert(state['value_param'] == 'ts_utc')
-    assert(state['regexp']      == 'sample-\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d:\\d\\d:\\d\\d.txt')
+    assert(state['regexp']      == 'sample-\\d\\d\\d\\d\\d\\d\\d\\d-\\d\\d\\d\\d\\d\\d.txt')
 
     # assert initial set of files
     assert(g.previous() == None)
@@ -65,11 +65,11 @@ def __test_directory_path():
 
 def __test_fixture_files():
     return [
-        'tmp/ts_utc/sample-2021-02-07-17:20:05.txt',
-        'tmp/ts_utc/sample-2021-02-07-17:20:06.txt',
-        'tmp/ts_utc/sample-2021-02-07-17:20:07.txt',
-        'tmp/ts_utc/sample-2021-02-07-17:20:08.txt',
-        'tmp/ts_utc/sample-2021-02-07-17:20:09.txt'
+        'tmp/ts_utc/sample-20210207-172005.txt',
+        'tmp/ts_utc/sample-20210207-172006.txt',
+        'tmp/ts_utc/sample-20210207-172007.txt',
+        'tmp/ts_utc/sample-20210207-172008.txt',
+        'tmp/ts_utc/sample-20210207-172009.txt'
     ]
 
 def __ensure_dir_present_and_empty(dir_path):

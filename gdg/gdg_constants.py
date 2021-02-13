@@ -34,7 +34,7 @@ class GdgConstants(object):
 
     @classmethod
     def timestamp_format(cls):
-        return '%Y-%m-%d-%H:%M:%S'
+        return '%Y%m%d-%H%M%S'
 
     @classmethod
     def parameter_char(cls):
@@ -49,6 +49,6 @@ class GdgConstants(object):
         d = dict()
         d[GdgConstants.format_generation()]      = '\\d\\d\\d\\d\\d\\d'  # 6 digits
         d[GdgConstants.format_epoch()]           = '\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d'  # 10 digits
-        d[GdgConstants.format_timestamp_utc()]   = '\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d:\\d\\d:\\d\\d'  # 2021-02-05-07:56:23
-        d[GdgConstants.format_timestamp_local()] = '\\d\\d\\d\\d-\\d\\d-\\d\\d-\\d\\d:\\d\\d:\\d\\d'  # 2021-02-05-07:56:23
+        d[GdgConstants.format_timestamp_utc()]   = '\\d\\d\\d\\d\\d\\d\\d\\d-\\d\\d\\d\\d\\d\\d'  # 20210205-075623
+        d[GdgConstants.format_timestamp_local()] = '\\d\\d\\d\\d\\d\\d\\d\\d-\\d\\d\\d\\d\\d\\d'  # 20210205-075623
         return d 

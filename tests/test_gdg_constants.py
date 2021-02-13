@@ -22,7 +22,7 @@ def test_generation_format():
     assert(gdg.GdgConstants.generation_format() == '{0:06d}')
 
 def test_timestamp_format():
-    assert(gdg.GdgConstants.timestamp_format() == '%Y-%m-%d-%H:%M:%S')
+    assert(gdg.GdgConstants.timestamp_format() == '%Y%m%d-%H%M%S')
 
 def test_parameter_char():
     assert(gdg.GdgConstants.parameter_char() == '%')
