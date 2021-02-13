@@ -28,34 +28,33 @@
 # warning: no previously-included files found matching 'pyenv.sh'
 # writing manifest file 'gdg.egg-info/SOURCES.txt'
 # running check
-# creating gdg-0.0.2
-# creating gdg-0.0.2/gdg
-# creating gdg-0.0.2/gdg.egg-info
-# creating gdg-0.0.2/tests
-# copying files to gdg-0.0.2...
-# copying LICENSE -> gdg-0.0.2
-# copying MANIFEST.in -> gdg-0.0.2
-# copying README.rst -> gdg-0.0.2
-# copying setup.cfg -> gdg-0.0.2
-# copying setup.py -> gdg-0.0.2
-# copying gdg/__init__.py -> gdg-0.0.2/gdg
-# copying gdg/gdg.py -> gdg-0.0.2/gdg
-# copying gdg/gdg_constants.py -> gdg-0.0.2/gdg
-# copying gdg.egg-info/PKG-INFO -> gdg-0.0.2/gdg.egg-info
-# copying gdg.egg-info/SOURCES.txt -> gdg-0.0.2/gdg.egg-info
-# copying gdg.egg-info/dependency_links.txt -> gdg-0.0.2/gdg.egg-info
-# copying gdg.egg-info/requires.txt -> gdg-0.0.2/gdg.egg-info
-# copying gdg.egg-info/top_level.txt -> gdg-0.0.2/gdg.egg-info
-# copying tests/__init__.py -> gdg-0.0.2/tests
-# copying tests/test_epoch_type.py -> gdg-0.0.2/tests
-# copying tests/test_gdg_constants.py -> gdg-0.0.2/tests
-# copying tests/test_generation_type.py -> gdg-0.0.2/tests
-# copying tests/test_timestype_local_type.py -> gdg-0.0.2/tests
-# copying tests/test_timestype_utc_type.py -> gdg-0.0.2/tests
-# Writing gdg-0.0.2/setup.cfg
+# creating gdg-0.1.0
+# creating gdg-0.1.0/gdg
+# creating gdg-0.1.0/gdg.egg-info
+# creating gdg-0.1.0/tests
+# copying files to gdg-0.1.0...
+# copying LICENSE -> gdg-0.1.0
+# copying MANIFEST.in -> gdg-0.1.0
+# copying README.rst -> gdg-0.1.0
+# copying setup.cfg -> gdg-0.1.0
+# copying setup.py -> gdg-0.1.0
+# copying gdg/__init__.py -> gdg-0.1.0/gdg
+# copying gdg/gdg.py -> gdg-0.1.0/gdg
+# copying gdg/gdg_constants.py -> gdg-0.1.0/gdg
+# copying gdg.egg-info/PKG-INFO -> gdg-0.1.0/gdg.egg-info
+# copying gdg.egg-info/SOURCES.txt -> gdg-0.1.0/gdg.egg-info
+# copying gdg.egg-info/dependency_links.txt -> gdg-0.1.0/gdg.egg-info
+# copying gdg.egg-info/requires.txt -> gdg-0.1.0/gdg.egg-info
+# copying gdg.egg-info/top_level.txt -> gdg-0.1.0/gdg.egg-info
+# copying tests/__init__.py -> gdg-0.1.0/tests
+# copying tests/test_epoch_type.py -> gdg-0.1.0/tests
+# copying tests/test_gdg_constants.py -> gdg-0.1.0/tests
+# copying tests/test_generation_type.py -> gdg-0.1.0/tests
+# copying tests/test_timestype_local_type.py -> gdg-0.1.0/tests
+# copying tests/test_timestype_utc_type.py -> gdg-0.1.0/tests
+# Writing gdg-0.1.0/setup.cfg
 # Creating tar archive
-# removing 'gdg-0.0.2' (and everything under it)
+# removing 'gdg-0.1.0' (and everything under it)
 # running upload
-# Submitting dist/gdg-0.0.2.tar.gz to https://upload.pypi.org/legacy/
+# Submitting dist/gdg-0.1.0.tar.gz to https://upload.pypi.org/legacy/
 # Server response (200): OK
-
