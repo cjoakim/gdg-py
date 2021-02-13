@@ -15,7 +15,7 @@ setup(
     name='gdg',
 
     # Versions should comply with PEP440.
-    version='0.0.2',
+    version='0.1.0',
 
     description='gdg - generation data groups with python',
     long_description=long_description,
